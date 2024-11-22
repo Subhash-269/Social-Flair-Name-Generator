@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Tag Generator</title>
+    <!-- Include Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .select2-container {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        #tag-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #tag-list li {
+            background: #007bff;
+            color: white;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">🌌 Galaxy Tag Generator</h1>
+        <form id="tag-form">
+            <div class="mb-3">
+                <label for="color" class="form-label">Colors:</label>
+                <select id="color" name="color" multiple class="select2 form-control" required>
+                    <option value="Red">Red</option>
+                    <option value="Crimson">Crimson</option>
+                    <option value="Scarlet">Scarlet</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Cyan">Cyan</option>
+                    <option value="Purple">Purple</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Emerald">Emerald</option>
+                    <option value="Violet">Violet</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="celestial_object" class="form-label">Celestial Objects:</label>
+                <select id="celestial_object" name="celestial_object" multiple class="select2 form-control" required>
+                    <option value="Pisces">Pisces</option>
+                    <option value="Orbit">Orbit</option>
+                    <option value="Nebula">Nebula</option>
+                    <option value="Eclipse">Eclipse</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="zodiac" class="form-label">Zodiac Signs:</label>
+                <select id="zodiac" name="zodiac" multiple class="select2 form-control">
+                    <option value="Aries">Aries</option>
+                    <option value="Taurus">Taurus</option>
+                    <option value="Gemini">Gemini</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="starname" class="form-label">Star Names:</label>
+                <select id="starname" name="starname" multiple class="select2 form-control">
+                    <option value="Sirius">Sirius</option>
+                    <option value="Betelgeuse">Betelgeuse</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="mood" class="form-label">Moods (optional):</label>
+                <select id="mood" name="mood" multiple class="select2 form-control">
+                    <option value="Mystic">Mystic</option>
+                    <option value="Silent">Silent</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Generate Tags</button>
+        </form>
+
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Generating tags...</p>
+        </div>
+
+        <div id="results">
+            <h2 class="text-center mt-4">✨ Generated Tags:</h2>
+            <ul id="tag-list" class="text-center"></ul>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2({
+                tags: true,
+                tokenSeparators: [',', ' '],
+                placeholder: "Select or add keywords",
+                width: '100%'
+            });
+
+            const form = document.getElementById('tag-form');
+            const tagList = document.getElementById('tag-list');
+            const loading = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                tagList.innerHTML = '';
+                loading.style.display = 'block';
+
+                const data = {
+                    color: $('#color').val(),
+                    celestial_object: $('#celestial_object').val(),
+                    zodiac: $('#zodiac').val(),
+                    starname: $('#starname').val(),
+                    mood: $('#mood').val()
+                };
+
+                const response = await fetch('/generate-tags', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                loading.style.display = 'none';
+
+                if (result.tags) {
+                    result.tags.forEach(tag => {
+                        const li = document.createElement('li');
+                        li.textContent = `✨ ${tag}`;
+                        tagList.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'No tags generated. Please try again.';
+                    tagList.appendChild(li);
+                }
+                resultsDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
