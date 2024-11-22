@@ -1,4 +1,4 @@
-# 🌌 Galaxy Tag Generator
+# Name Tag Generator
 
 A **full-stack web application** that allows users to generate creative, thematic tags based on various attributes and themes. Powered by **OpenAI's API**, this project offers a sleek, interactive, and dynamic user experience.
 
