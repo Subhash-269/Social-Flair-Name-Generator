@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Tag Generator</title>
-    <!-- Include Bootstrap -->
+    <title>Tag Generator</title>
+    <!-- Include Bootstrap and Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -46,59 +46,55 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">🌌 Galaxy Tag Generator</h1>
+        <h1 class="text-center">✨ Tag Generator</h1>
         <form id="tag-form">
+            <!-- Theme Selection -->
             <div class="mb-3">
-                <label for="color" class="form-label">Colors:</label>
-                <select id="color" name="color" multiple class="select2 form-control" required>
-                    <option value="Red">Red</option>
-                    <option value="Crimson">Crimson</option>
-                    <option value="Scarlet">Scarlet</option>
-                    <option value="Blue">Blue</option>
-                    <option value="Cyan">Cyan</option>
-                    <option value="Purple">Purple</option>
-                    <option value="Gold">Gold</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Emerald">Emerald</option>
-                    <option value="Violet">Violet</option>
+                <label for="theme" class="form-label">Select Theme:</label>
+                <select id="theme" name="theme" class="select2 form-control">
+                    <option value="superhero">Superhero</option>
+                    <option value="galaxy">Galaxy</option>
+                    <option value="developer">Developer</option>
+                    <option value="custom">Custom</option>
                 </select>
             </div>
 
+            <div id="dynamic-options">
+                <!-- Dynamic Options Based on Theme -->
+            </div>
             <div class="mb-3">
-                <label for="celestial_object" class="form-label">Celestial Objects:</label>
-                <select id="celestial_object" name="celestial_object" multiple class="select2 form-control" required>
-                    <option value="Pisces">Pisces</option>
-                    <option value="Orbit">Orbit</option>
-                    <option value="Nebula">Nebula</option>
-                    <option value="Eclipse">Eclipse</option>
+                <label for="adjectives" class="form-label">Adjectives:</label>
+                <select id="adjectives" name="adjectives" multiple class="select2 form-control">
+                    <option value="Brave">Brave</option>
+                    <option value="Magical">Magical</option>
+                    <option value="Charismatic">Charismatic</option>
+                    <option value="Majestic">Majestic</option>
+                    <option value="Dynamic">Dynamic</option>
                 </select>
             </div>
-
+            
             <div class="mb-3">
-                <label for="zodiac" class="form-label">Zodiac Signs:</label>
-                <select id="zodiac" name="zodiac" multiple class="select2 form-control">
-                    <option value="Aries">Aries</option>
-                    <option value="Taurus">Taurus</option>
-                    <option value="Gemini">Gemini</option>
+                <label for="food_drinks" class="form-label">Food/Drinks:</label>
+                <select id="food_drinks" name="food_drinks" multiple class="select2 form-control">
+                    <option value="Latte">Latte</option>
+                    <option value="Pizza">Pizza</option>
+                    <option value="Sushi">Sushi</option>
+                    <option value="Bubble Tea">Bubble Tea</option>
+                    <option value="Chocolates">Chocolates</option>
                 </select>
             </div>
-
+            
             <div class="mb-3">
-                <label for="starname" class="form-label">Star Names:</label>
-                <select id="starname" name="starname" multiple class="select2 form-control">
-                    <option value="Sirius">Sirius</option>
-                    <option value="Betelgeuse">Betelgeuse</option>
+                <label for="fantasy_mythology" class="form-label">Fantasy/Mythology:</label>
+                <select id="fantasy_mythology" name="fantasy_mythology" multiple class="select2 form-control">
+                    <option value="Dragon">Dragon</option>
+                    <option value="Phoenix">Phoenix</option>
+                    <option value="Unicorn">Unicorn</option>
+                    <option value="Mermaid">Mermaid</option>
+                    <option value="Elf">Elf</option>
                 </select>
             </div>
-
-            <div class="mb-3">
-                <label for="mood" class="form-label">Moods (optional):</label>
-                <select id="mood" name="mood" multiple class="select2 form-control">
-                    <option value="Mystic">Mystic</option>
-                    <option value="Silent">Silent</option>
-                </select>
-            </div>
-
+            
             <button type="submit" class="btn btn-primary w-100">Generate Tags</button>
         </form>
 
@@ -117,12 +113,65 @@
 
     <script>
         $(document).ready(function () {
+            // Initialize Select2
             $(".select2").select2({
                 tags: true,
                 tokenSeparators: [',', ' '],
                 placeholder: "Select or add keywords",
                 width: '100%'
             });
+
+            // Dynamic Theme Options
+            const dynamicOptions = {
+                superhero: {
+                    color: ["Red", "Blue", "Black", "Yellow", "Green"],
+                    mood: ["Brave", "Resilient", "Charismatic", "Mysterious"],
+                    hobbies: ["Saving Lives", "Flying", "Infiltration", "Martial Arts"],
+                },
+                galaxy: {
+                    color: ["Crimson", "Scarlet", "Cyan", "Silver", "Emerald"],
+                    mood: ["Ethereal", "Mystic", "Silent", "Cosmic"],
+                    hobbies: ["Stargazing", "Astrology", "Exploration"],
+                },
+                developer: {
+                    color: ["Black", "White", "Grey", "Neon"],
+                    mood: ["Focused", "Innovative", "Determined"],
+                    hobbies: ["Coding", "Debugging", "Hackathons"],
+                },
+                custom: {
+                    color: [],
+                    mood: [],
+                    hobbies: [],
+                }
+            };
+
+            // Handle Theme Change
+            $("#theme").change(function () {
+                const theme = $(this).val();
+                const options = dynamicOptions[theme] || {};
+
+                $("#dynamic-options").html("");
+
+                Object.keys(options).forEach((key) => {
+                    const label = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize first letter
+                    const select = `
+                        <div class="mb-3">
+                            <label for="${key}" class="form-label">${label}:</label>
+                            <select id="${key}" name="${key}" multiple class="select2 form-control">
+                                ${options[key].map((opt) => `<option value="${opt}">${opt}</option>`).join("")}
+                            </select>
+                        </div>
+                    `;
+                    $("#dynamic-options").append(select);
+                });
+
+                $(".select2").select2({
+                    tags: true,
+                    tokenSeparators: [',', ' '],
+                    placeholder: "Select or add keywords",
+                    width: '100%',
+                });
+            }).change();
 
             const form = document.getElementById('tag-form');
             const tagList = document.getElementById('tag-list');
@@ -136,11 +185,13 @@
                 loading.style.display = 'block';
 
                 const data = {
+                    theme: $('#theme').val(),
                     color: $('#color').val(),
-                    celestial_object: $('#celestial_object').val(),
-                    zodiac: $('#zodiac').val(),
-                    starname: $('#starname').val(),
-                    mood: $('#mood').val()
+                    mood: $('#mood').val(),
+                    hobbies: $('#hobbies').val(),
+                    adjectives: $('#adjectives').val(),
+                    food_drinks: $('#food_drinks').val(),
+                    fantasy_mythology: $('#fantasy_mythology').val()
                 };
 
                 const response = await fetch('/generate-tags', {
@@ -165,6 +216,7 @@
                 }
                 resultsDiv.style.display = 'block';
             });
+
         });
     </script>
 </body>
