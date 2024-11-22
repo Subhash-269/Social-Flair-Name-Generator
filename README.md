@@ -1,4 +1,4 @@
-# 🌌 Name Tag Generator
+# Social Flair Name Generator
 
 A **full-stack web application** to generate creative, thematic name tags based on user-selected attributes and themes. Powered by **OpenAI's API** and hosted on **Heroku**.
 
